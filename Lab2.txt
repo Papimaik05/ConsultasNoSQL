@@ -1,0 +1,35 @@
+1. Escribe el comando que te muestra el listado de las bases de datos.
+ show dbs
+ 2. Como vamos a trabajar con la base de datos “nobelPrizes”, selecciona dicha base de datos. 
+ use nobelPrizes
+3. Escribe la consulta que te permita obtener el número de documentos de la colección awards. 
+db.awards.count()
+4. Escribe la consulta cuyo resultado te muestre el primer documento. 
+db.awards.findOne()
+5. Escribe la consulta que muestre los valores distintos de la clave awardYear.
+db.awards.distinct(“awardYear”)
+ 6. Seleccionar los premios concedidos en el año 2010. ¿Cuántos documentos hay en el resultado de la consulta? 
+ db.awards.find({"awardYear" : '2010'}).count()
+7. Seleccionar los premios concedidos donde la cantidad del premio es 1000000 (clave prizeAmount). Mostrar solo la categoría del premio (category) en idioma “en” y la cantidad del premio. 5 
+ db.awards.find({"prizeAmount" : 1000000},{"_id":0,"category.en":1,"prizeAmount":1})
+8. Seleccionar los premios concedidos donde la cantidad del premio es mayor de 150.000 e inferior a 1.000.000 (clave prizeAmount). ¿Cuántos documentos hay en el resultado de la consulta? 
+ db.awards.find({"prizeAmount" : {$gt : 150000},"prizeAmount" : {$lt : 1000000}}).count()
+ db.awards.find({"prizeAmount" : {$gt : 150000, $lt : 1000000}}).count()
+9. Seleccionar los premios concedidos donde la cantidad del premio es mayor de 700.000 e inferior a 1.000.000 (clave prizeAmount). Mostrar solo la categoría del premio (category) en idioma “en” y la cantidad del premio. Ordena los resultados por cantidad del premio. 
+  db.awards.find({"prizeAmount" : {$gt : 700000, $lt : 1000000}},{"_id":0,"category.en":1,"prizeAmount":1}).sort({"prizeAmount":1})
+10. Seleccionar los premios concedidos que cumplan las siguientes condiciones. Mostrar solo la categoría del premio (category) en idioma “en”, la fecha y la cantidad del premio. a. la cantidad del premio debe ser mayor de 700.000 e inferior a 1.000.000 (clave prizeAmount). b. La fecha del premio debe ser inferior a 1979.
+ db.awards.find({"prizeAmount" : {$gt : 700000, $lt : 1000000},"awardYear" : {$lt : '1979'} },{"_id":0,"category.en":1,"awardYear":1,"prizeAmount":1})
+ 11. Selecciona los 5 primeros documentos que contengan la clave: dateAwarded. Mostrar en los resultados la url del premio (links) y el campo dateAwarded. 
+ db.awards.find({"dateAwarded" : {$exists : true}},{"_id":0,"links":1,"dateAwarded":1}).limit(5)
+12. Seleccionar los premios concedidos en el año 2000 y en el año 1980. Salta 10 documentos y muestra solo 5 documentos. 
+ db.awards.find({"awardYear" : {$in : ['2000','1980']}},{"_id":0,"category.en":1,"awardYear":1}).skip(10).limit(5)
+13. Seleccionar los nombres (distintos) de las personas que han recibido un premio. Seleccionar solo aquellos registrados con nombre en inglés “en”. 
+
+db.awards.distinct("laureates.knownName.en", {
+  "laureates.knownName.en": { $exists: true }
+})
+14. En qué años el premio concedido supera los 2900000.
+db.awards.distinct("awardYear", {
+ "prizeAmount" : {$gt : 2900000}
+},{"_id" : 0, "awardYear" : 1})
+

@@ -1,0 +1,41 @@
+Consulta 1: Escribe la consulta que muestra el listado de las distintas categorías que nos podemos encontrar (campo category).
+db.items.distinct("category")
+Consulta 2: Número de documentos clasificados dentro de la categoría es 'Iglesias y catedrales'. (Sol:290).
+db.items.find({"category":"Iglesias y catedrales"}).count()
+db.items.find({"category": {$regex : /Iglesias y catedrales/}}).count()
+Consulta 3: Número de documentos clasificados dentro la categoría 'Cementerios'. (Sol: 6).
+db.items.find({"category":"Cementerios"}).count()
+db.items.find({"category": {$regex : /Cementerios/}}).count()
+Consulta 4: Número de documentos clasificados dentro la categoría 'Cementerios' o 'Iglesias y
+catedrales'. (Sol: 296)
+db.items.find({"category": {$in:["Iglesias y catedrales","Cementerios"]}})
+db.items.find({"category": {$regex : /Iglesias y catedrales|Cementerios/}}).count()
+Consulta 5: Listado de reviews relacionadas con museos. (Sugerencia: realizar una búsqueda por la expresión 'museo' en el campo category). (Sol: 88)
+db.items.find({"category": {$regex : /Museo/i}}).count()
+
+Consulta 6: Número de reviews realizadas en el mes de enero de algún usuario de Londres. (Sol: 4).
+Dicha información se encuentra en los campos date y reviewer.
+db.items.find({"location": {$regex : /Londres/},"date": {$regex : /enero/}}).count()
+Consulta 7: Número de reviews realizadas en el mes de enero de algún usuario de Londres y que en su
+comentario aparezca la palabra ‘Goya’. El comentario del usuario se encuentra en el campo text. (Sol:
+1).
+db.items.find({"location": {$regex : /Londres/},"date": {$regex : /enero/},"text": {$regex : /Goya/}}).count()
+Consulta 8: Número de reviews cuyo campo nombre contenga la palabra ‘parroquia’ . (Sol: 61)
+db.items.find({"name": {$regex : /Parroquia/i}}).count()
+Consulta 9: Número de reviews cuyo campo nombre contenga la palabra ‘parroquia’ justo al principio.
+(Sol: 53).
+db.items.find({"name":{$regex:/^parroquia/i}}).count()
+Consulta 10: Número de reviews cuyo campo nombre contenga la palabra ‘parroquia’ pero no al
+principio. (Sol: 8).
+db.items.find({"name":{$regex:/parroquia/i,$not:{$regex:/^parroquia/i}}}).count()
+Consulta 11: Que aparezca en el campo texto alguna referencia a algún año del siglo pasado. (Sol: 83).
+db.items.find({"text":{$regex :/\b(19\d{2})\b/}}).count()
+Consulta 12: Reviews realizadas en la primera quincena del mes de agosto. (Sol: 19).
+db.items.find({"date":{$regex :/\b(\d|1[0-5])( de)? agosto\b/i}}).count()
+Consulta 13: Reviews en cuyo texto aparece la cadena "visita", pero no "visita guiada". (Sol: 117).
+db.items.find({"text":{$regex :/visita (?!guiada)/}}).count()
+Consulta 14: Buscar reviews donde se habla de Felipe II en el campo texto. (Sol: 4).
+db.items.find({"text":{$regex :/\bFelipe II\b/i}}).count()
+Consulta 15: Buscar reviews donde el campo text tiene menos de 60 caracteres. Consulta la ayuda del
+operador $strLenCP del tipo string. (Sol: 30).
+db.items.find({ $expr: { $lt: [{ $strLenCP: "$text" }, 60] } }).count()
